@@ -3,10 +3,16 @@ package com.msla_mac.lamrecordscrudapi
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
+import javax.xml.transform.ErrorListener
 import kotlin.random.Random
 
 class MainActivity : BaseActivity() {
@@ -18,7 +24,6 @@ class MainActivity : BaseActivity() {
         setContentView(R.layout.activity_main)
 
         recyclerView = findViewById(R.id.recordsRecycler)
-
         recordsListAdapter = RecordsAdapter(recordsList) { position ->
             toastIt("You selected position: $position")
 
@@ -26,7 +31,6 @@ class MainActivity : BaseActivity() {
             val intent = Intent(this, ShowRecord::class.java)
             currentRecord = position
             startActivity(intent)
-
         }
 
         toastIt("Created list")
@@ -37,6 +41,24 @@ class MainActivity : BaseActivity() {
 
 
         recordsListAdapter.notifyDataSetChanged()
+
+        ///Instantiate the RequestQueue.
+        val queue = Volley.newRequestQueue(this)
+        val url = "https://coder.land/api/products"
+
+        ///Request a string response from the provided URL.
+        val stringRequest = StringRequest(
+            Request.Method.GET, url,
+            { response ->
+                //display the first 500 characters of the response string.
+                Log.i("CRUDapi", "Response is: ${response.substring(0, 500)}")
+            },
+            {
+                Log.i("CRUDapi", "It no worky - ${it.message}")
+            })
+
+        //Add the request to the RequestQueue.
+        queue.add(stringRequest)
     }
 
     fun editRecordOnClick(v : View) {
