@@ -36,7 +36,9 @@ class ShowRecord : BaseActivity() {
 
                 //delete the element from the list
                 recordsList.removeAt(currentRecord)
-                writeRecordsToFile()
+
+               // TODO: save to database
+
                 toastIt("Record is deleted")
                 //Go to another screen - Show all activity
                 val intent = Intent(this, MainActivity::class.java)

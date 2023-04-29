@@ -33,35 +33,35 @@ class AddRecord : BaseActivity() {
         edtEditDateCreated = findViewById(R.id.edtEditDateCreated)
     }
 
-    fun addNewRecordOnClick( v : View) {
-            val newRecordID = recordsList.size + 1
-            val rating: Int = edtEditRating.text.toString().toInt()
-
-        if (edtEditName.text == null || edtEditDescription.text == null || edtEditPrice.text == null || edtEditRating.text == null || (rating <= 0 || rating > 5)) {
-            edtEditName.error = "Please enter valid name"
-            edtEditDescription.error = "Please enter valid description"
-            edtEditRating.error = "Please enter a rating between 1 and 5"
-            edtEditPrice.error = "Please enter valid price"
-        }
-        else {
-            val addRecordItem = RecordsItem(
-                newRecordID,
-                edtEditName.text.toString(),
-                edtEditDescription.text.toString(),
-                edtEditPrice.text.toString().toDouble(),
-                edtEditRating.text.toString().toInt(),
-                edtEditDateModified.toString(),
-                edtEditDateCreated.toString()
-            )
-
-            recordsList.add(addRecordItem)
-            appendRecordToFile(addRecordItem)
+    fun addNewRecordOnClick( v : View){
+//            val newRecordID = recordsList.size + 1
+//            val rating: Int = edtEditRating.text.toString().toInt()
+//
+//        if (edtEditName.text == null || edtEditDescription.text == null || edtEditPrice.text == null || edtEditRating.text == null || (rating <= 0 || rating > 5)) {
+//            edtEditName.error = "Please enter valid name"
+//            edtEditDescription.error = "Please enter valid description"
+//            edtEditRating.error = "Please enter a rating between 1 and 5"
+//            edtEditPrice.error = "Please enter valid price"
+//        }
+//        else {
+//            val addRecordItem = RecordsItem(
+//                newRecordID,
+//                edtEditName.text.toString(),
+//                edtEditDescription.text.toString(),
+//                edtEditPrice.text.toString().toDouble(),
+//                edtEditRating.text.toString().toInt(),
+//                edtEditDateModified.toString(),
+//                edtEditDateCreated.toString())
+//
+//            recordsList.add(addRecordItem)
+//
+            //TODO: Save to the database
 
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
 
             toastIt("Successfully Added")
-        }
+//        }
     }
 
     fun showAllRecordsOnClick(v : View) {
