@@ -2,10 +2,18 @@ package com.msla_mac.lamrecordscrudapi
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.TextView
+import com.android.volley.Request
+import com.android.volley.toolbox.JsonArrayRequest
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
+import org.json.JSONObject
 
 class ShowRecord : BaseActivity() {
+    lateinit var record : RecordsItem
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_show_record)
@@ -18,7 +26,7 @@ class ShowRecord : BaseActivity() {
         val txtDateModified: TextView = findViewById(R.id.txtDateModified)
         val txtDateCreated: TextView = findViewById(R.id.txtDateCreated)
 
-        val record = recordsList[ currentRecord ]
+        record = recordsList[ currentRecord ]
 
         txtRecordID.text = record.recordID.toString()
         txtName.text = record.name
@@ -31,21 +39,41 @@ class ShowRecord : BaseActivity() {
 
     fun deleteRecordOnClick ( v: View){
         val builder = android.app.AlertDialog.Builder(this)
-        builder.setMessage("Are you sure you want to delete this record?").setCancelable(false)
+        builder.setMessage("Are you sure you want to delete this record?")
+            .setCancelable(false)
             .setPositiveButton("Yes") { dialog, which ->
-
+                toastIt("Record: ${record.recordID} is deleted.")
                 //delete the element from the list
                 recordsList.removeAt(currentRecord)
 
-               // TODO: save to database
+               // TODO: save to database:
+                //start data base
+                //Instantiate the RequestQueue.
+                val queue = Volley.newRequestQueue(this)
+                //Request a string response from the provided URL.
+                val jsonObjectRequest = JsonObjectRequest(
+                    Request.Method.DELETE,
+                    baseUrl + "/${record.recordID}",
+                    null, //jsonRequestObject
+                    { response ->
+                        //display the first 500 characters of the response string.
+                        Log.i("CRUDapi", "Response is: ${response.toString()}")
+                    },
+                    {
+                        Log.i("CRUDapi", "It no worky - ${it.message}")
+                    })
 
-                toastIt("Record is deleted")
+                //Add the request to the RequestQueue.
+                jsonObjectRequest.setShouldCache(false) //this forces information retrieval from the network again and not the volley cache data file in the project.
+                queue.add(jsonObjectRequest)
+                //End save to database
+
                 //Go to another screen - Show all activity
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
             }
             .setNegativeButton("No"){ dialog, which ->
-                toastIt("You canceled")
+                toastIt("Delete canceled.")
                 dialog.cancel()
             }
             .create().show()

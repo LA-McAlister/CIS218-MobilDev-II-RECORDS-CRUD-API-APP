@@ -35,7 +35,8 @@ class MainActivity : BaseActivity() {
             startActivity(intent)
         }
 
-        toastIt("Created list")
+
+        //toastIt("Created list")
 
         recyclerView.layoutManager = LinearLayoutManager(applicationContext)
         recyclerView.itemAnimator = DefaultItemAnimator()
@@ -46,12 +47,12 @@ class MainActivity : BaseActivity() {
 
         ///Instantiate the RequestQueue.
         val queue = Volley.newRequestQueue(this)
-        val url = "https://coder.land/api/products"
+
 
         ///Request a string response from the provided URL.
         val stringRequest = JsonArrayRequest(
             Request.Method.GET,
-            url,
+            baseUrl,
             null, //jsonRequestObject
             { response ->
 
