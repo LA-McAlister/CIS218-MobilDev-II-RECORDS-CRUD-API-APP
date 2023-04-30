@@ -10,8 +10,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.Request
 import com.android.volley.Response
+import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import org.json.JSONObject
 import javax.xml.transform.ErrorListener
 import kotlin.random.Random
 
@@ -47,17 +49,37 @@ class MainActivity : BaseActivity() {
         val url = "https://coder.land/api/products"
 
         ///Request a string response from the provided URL.
-        val stringRequest = StringRequest(
-            Request.Method.GET, url,
+        val stringRequest = JsonArrayRequest(
+            Request.Method.GET,
+            url,
+            null, //jsonRequestObject
             { response ->
+
+                for (i in 0 until response.length()) {
+                    val record: JSONObject = response.getJSONObject(i)
+                    val id = record.getInt("id")
+                    val name = record.getString("name")
+                    val description = record.getString("description")
+                    val price = record.getDouble("price")
+                    val rating = record.getInt("rating")
+                    val dateCreated = record.getString("created_at")
+                    val dateModified = record.getString("updated_at")
+                    val recordsItem = RecordsItem(id, name, description, price, rating, dateModified, dateCreated)
+                    recordsList.add(recordsItem)
+                }
+                recordsListAdapter.notifyDataSetChanged()
+
+
+
                 //display the first 500 characters of the response string.
-                Log.i("CRUDapi", "Response is: ${response.substring(0, 500)}")
+                Log.i("CRUDapi", "Response is: ${response.toString()}")
             },
             {
                 Log.i("CRUDapi", "It no worky - ${it.message}")
             })
 
         //Add the request to the RequestQueue.
+        stringRequest.setShouldCache(false) //this forces information retrieval from the network again and not the volley cache data file in the project.
         queue.add(stringRequest)
     }
 
