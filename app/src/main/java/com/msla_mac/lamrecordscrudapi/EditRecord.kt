@@ -3,8 +3,14 @@ package com.msla_mac.lamrecordscrudapi
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.EditText
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 
 class EditRecord : BaseActivity() {
 
@@ -29,7 +35,7 @@ class EditRecord : BaseActivity() {
         edtEditDateModified = findViewById(R.id.edtEditDateModified)
         edtEditDateCreated = findViewById(R.id.edtEditDateCreated)
 
-        //setting textEdit to defualt values
+        //setting textEdit to default values
         edtEditRecordID.setText(record.recordID.toString())
         edtEditName.setText(record.name)
         edtEditDescription.setText(record.description)
@@ -41,29 +47,48 @@ class EditRecord : BaseActivity() {
 
     fun editRecordsOnClick(v: View) {
         val record = recordsList[currentRecord]
-        val rating: Int = edtEditRating.text.toString().toInt()
+        record.name = edtEditName.text.toString()
+        record.description = edtEditDescription.text.toString()
+        record.price = edtEditPrice.text.toString().toDouble()
+        record.rating = edtEditRating.text.toString().toInt()
+        recordsList[currentRecord] = record
 
-        if (edtEditName.text == null || edtEditDescription.text == null || edtEditPrice.text == null || edtEditRating.text == null || (rating <= 0 || rating > 5)) {
-            edtEditName.error = "Please enter valid name"
-            edtEditDescription.error = "Please enter valid description"
-            edtEditRating.error = "Please enter a rating between 1 and 5"
-            edtEditPrice.error = "Please enter valid price"
+        //Write the edited record to database:
+        //Instantiate the RequestQueue.
+        val queue = Volley.newRequestQueue(this)
+
+        //Request a string response from the provided URL.
+        val jsonObjectRequest : StringRequest = object : StringRequest (
+            Request.Method.PUT,
+            "$baseUrl/${record.recordID}",
+            Response.Listener { response ->
+                //display the first 500 characters of the response string.
+                Log.i("CRUDapi", "Response is: $response")
+            },
+            Response.ErrorListener {
+                Log.i("CRUDapi", "It no worky - ${it.message}")
+            }){
+            override fun getParams(): MutableMap<String, String> {
+                val params : MutableMap<String, String> = HashMap()
+                params["name"] = record.name
+                params["description"] = record.description
+                params["price"] = record.price.toString()
+                params["rating"] = record.rating.toString()
+                params["createdDate"] = record.dateCreated
+                params["modifiedDate"] = record.dateModified
+                return params
+            }
         }
-        else {
-            record.name = edtEditName.text.toString()
-            record.description = edtEditDescription.text.toString()
-            record.price = edtEditPrice.text.toString().toDouble()
-            record.rating = edtEditRating.text.toString().toInt()
-            recordsList[currentRecord] = record
 
-            //writing back to file
+        //Add the request to the RequestQueue.
+        jsonObjectRequest.setShouldCache(false) //this forces information retrieval from the network again and not the volley cache data file in the project.
+        queue.add(jsonObjectRequest)
+            //End save to database
 
-            toastIt("Item Updated")
-            val intent = Intent(this, ShowRecord::class.java)
-            startActivity(intent)
-        }
+        toastIt("Item Updated")
+        val intent = Intent(this, ShowRecord::class.java)
+        startActivity(intent)
     }
-
 
     fun showAllRecordsOnClick(v : View) {
         val intent = Intent(this, MainActivity::class.java)
