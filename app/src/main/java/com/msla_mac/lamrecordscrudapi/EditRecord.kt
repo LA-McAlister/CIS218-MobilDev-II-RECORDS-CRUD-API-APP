@@ -6,11 +6,14 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.EditText
+import android.widget.TextView
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class EditRecord : BaseActivity() {
 
@@ -19,8 +22,10 @@ class EditRecord : BaseActivity() {
     lateinit var edtEditDescription: EditText
     lateinit var edtEditPrice: EditText
     lateinit var edtEditRating: EditText
-    lateinit var edtEditDateModified: EditText
-    lateinit var edtEditDateCreated: EditText
+    lateinit var edtEditDateModified: TextView
+
+    private val formatter = DateTimeFormatter.ofPattern("dd-MMMM-yyyy")
+    private val modifiedDate : String = LocalDateTime.now().format(formatter)!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +38,7 @@ class EditRecord : BaseActivity() {
         edtEditPrice = findViewById(R.id.edtEditPrice)
         edtEditRating = findViewById(R.id.edtEditRating)
         edtEditDateModified = findViewById(R.id.edtEditDateModified)
-        edtEditDateCreated = findViewById(R.id.edtEditDateCreated)
+
 
         //setting textEdit to default values
         edtEditRecordID.setText(record.recordID.toString())
@@ -42,7 +47,7 @@ class EditRecord : BaseActivity() {
         edtEditPrice.setText(record.price.toString())
         edtEditRating.setText(record.rating.toString())
         edtEditDateModified.setText(record.dateModified)
-        edtEditDateCreated.setText(record.dateCreated)
+
     }
 
     fun editRecordsOnClick(v: View) {
@@ -74,8 +79,7 @@ class EditRecord : BaseActivity() {
                 params["description"] = record.description
                 params["price"] = record.price.toString()
                 params["rating"] = record.rating.toString()
-                params["createdDate"] = record.dateCreated
-                params["modifiedDate"] = record.dateModified
+                params["modifiedDate"] = modifiedDate
                 return params
             }
         }
