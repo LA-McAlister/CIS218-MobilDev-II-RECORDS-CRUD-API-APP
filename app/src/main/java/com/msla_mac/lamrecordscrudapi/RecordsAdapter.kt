@@ -39,14 +39,14 @@ internal class RecordsAdapter(
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        // TODO: finish binding to XML view
+
         //get the data from the list and fill in the various CELL from fields
         val recordItem = recordsList[position]
 
         holder.recordID.text = recordItem.recordID.toString()
         holder.item.text = recordItem.name
         holder.description.text = recordItem.description
-        holder.price.text = recordItem.price.toString()
+        holder.price.text = recordItem.price.toString().format("%2f", this)
         holder.rating.text = recordItem.rating.toString()
         holder.dateModified.text = recordItem.dateModified
         holder.dateCreated.text = recordItem.dateCreated

@@ -70,8 +70,6 @@ class MainActivity : BaseActivity() {
                 }
                 recordsListAdapter.notifyDataSetChanged()
 
-
-
                 //display the first 500 characters of the response string.
                 Log.i("CRUDapi", "Response is: ${response.toString()}")
             },
